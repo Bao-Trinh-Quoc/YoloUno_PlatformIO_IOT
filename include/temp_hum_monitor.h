@@ -2,6 +2,7 @@
 #define __TEMP_HUM_MONITOR__
 #include <Arduino.h>
 #include "DHT20.h"
+#include "LiquidCrystal_I2C.h"
 
 void temp_hum_monitor(void *pvParameters); 
 

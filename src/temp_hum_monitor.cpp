@@ -1,10 +1,16 @@
 #include "temp_hum_monitor.h"
 DHT20 dht20;
+LiquidCrystal_I2C lcd(0x21, 16, 2);
 
 void temp_hum_monitor(void *pvParamaters) {
     Serial.begin(115200);
     Wire.begin(11, 12);
     dht20.begin();
+
+    // Init LCD
+    lcd.begin();
+    lcd.backlight();
+    lcd.clear();
 
     while (1) {
         int ret = dht20.read();
@@ -16,6 +22,17 @@ void temp_hum_monitor(void *pvParamaters) {
             Serial.print(" °C, Humidity: ");
             Serial.print(humi);
             Serial.println(" %");
+
+            lcd.setCursor(0, 0);
+            lcd.print("TEMP: ");
+            lcd.print(temp);
+            lcd.print(" C");
+
+            lcd.setCursor(0, 1);
+            lcd.print("HUM: ");
+            lcd.print(humi);
+            lcd.print(" %");
+
         } else {
             Serial.print("DHT20 Read Error: ");
             Serial.println(ret);
