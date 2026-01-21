@@ -12,7 +12,7 @@ void setup() {
 
   xTaskCreate(led_blinky, "Task LED Control", 2048, NULL, 2, NULL);
   xTaskCreate(neo_blinky, "Task Neo Blink", 2048, NULL, 2, NULL);
-  // xTaskCreate(temp_hum_monitor, "Task TEMP HUMI Monitor", 2048, NULL, 2, NULL);
+  xTaskCreate(temp_hum_monitor, "Task TEMP HUMI Monitor", 2048, NULL, 2, NULL);
   xTaskCreate(main_server_task, "Task Main Server", 8192, NULL, 2, NULL);
 }
 

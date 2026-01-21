@@ -10,7 +10,7 @@ the LCD has weird address 0x21 eventhough its 16x2
 # 21/1
 
 What to do:
-display the realtime temp and hum to the webserver
+display the realtime temp and hum to the webserver v 
 control the LED from webserver (maybe just need to do with the onboard led)
 Make the webserver look better ()
 

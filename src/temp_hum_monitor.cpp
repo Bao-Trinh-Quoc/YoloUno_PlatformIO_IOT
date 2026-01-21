@@ -1,4 +1,6 @@
 #include "temp_hum_monitor.h"
+#include "global.h"
+
 DHT20 dht20;
 LiquidCrystal_I2C lcd(0x21, 16, 2);
 
@@ -16,6 +18,11 @@ void temp_hum_monitor(void *pvParamaters) {
         if (ret == DHT20_OK) {
             float temp = dht20.getTemperature();
             float humi = dht20.getHumidity();
+
+            // Update global variables
+            temp_var = temp;
+            humi_var = humi;
+
             Serial.print("Temperature: ");
             Serial.print(temp);
             Serial.print(" °C, Humidity: ");

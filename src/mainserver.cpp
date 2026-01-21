@@ -1,6 +1,7 @@
 #include "mainserver.h"
 #include <WiFi.h>
 #include <WebServer.h>
+#include "global.h"
 
 bool led1_state = false;
 bool led2_state = false;
@@ -17,8 +18,8 @@ unsigned long connect_start_ms = 0;
 bool connecting = false;
 
 String mainPage() {
-  float temperature = 10;
-  float humidity = 20;
+  float temperature = temp_var;
+  float humidity = humi_var;
   String led1 = led1_state ? "ON" : "OFF";
   String led2 = led2_state ? "ON" : "OFF";
 
@@ -120,8 +121,8 @@ void handleToggle() {
 }
 
 void handleSensors() {
-  float t = 10;
-  float h = 20;
+  float t = temp_var;
+  float h = humi_var;
   String json = "{\"temp\":"+String(t)+",\"hum\":"+String(h)+"}";
   server.send(200, "application/json", json);
 }
