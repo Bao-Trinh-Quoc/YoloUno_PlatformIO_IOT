@@ -3,7 +3,6 @@ DHT20 dht20;
 LiquidCrystal_I2C lcd(0x21, 16, 2);
 
 void temp_hum_monitor(void *pvParamaters) {
-    Serial.begin(115200);
     Wire.begin(11, 12);
     dht20.begin();
 
