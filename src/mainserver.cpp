@@ -115,6 +115,8 @@ void handleToggle() {
   int led = server.arg("led").toInt();
   if (led == 1) led1_state = !led1_state;
   else if (led == 2) led2_state = !led2_state;
+  led_state = led1_state || led2_state;
+  
   server.send(200, "application/json",
     "{\"led1\":\"" + String(led1_state ? "ON":"OFF") +
     "\",\"led2\":\"" + String(led2_state ? "ON":"OFF") + "\"}");

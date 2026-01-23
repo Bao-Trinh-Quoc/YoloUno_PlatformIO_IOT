@@ -8,7 +8,7 @@ void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
   // Wait for USB Serial to be ready
-  delay(1000);
+  vTaskDelay(1000 / portTICK_PERIOD_MS);
 
   xTaskCreate(led_blinky, "Task LED Control", 2048, NULL, 2, NULL);
   xTaskCreate(neo_blinky, "Task Neo Blink", 2048, NULL, 2, NULL);
