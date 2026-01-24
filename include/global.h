@@ -2,8 +2,8 @@
 #define __GLOBAL_H__
 
 extern int global_var;
-extern float temp_var;
-extern float humi_var;
+extern float global_temp;
+extern float global_humi;
 extern int led_state;
 
 #endif

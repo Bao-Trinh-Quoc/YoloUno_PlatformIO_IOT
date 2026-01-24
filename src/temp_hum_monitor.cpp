@@ -20,8 +20,8 @@ void temp_hum_monitor(void *pvParamaters) {
             float humi = dht20.getHumidity();
 
             // Update global variables
-            temp_var = temp;
-            humi_var = humi;
+            global_temp = temp;
+            global_humi = humi;
 
             Serial.print("Temperature: ");
             Serial.print(temp);

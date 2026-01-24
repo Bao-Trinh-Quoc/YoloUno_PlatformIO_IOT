@@ -18,8 +18,8 @@ unsigned long connect_start_ms = 0;
 bool connecting = false;
 
 String mainPage() {
-  float temperature = temp_var;
-  float humidity = humi_var;
+  float temperature = global_temp;
+  float humidity = global_humi;
   String led1 = led1_state ? "ON" : "OFF";
   String led2 = led2_state ? "ON" : "OFF";
 
@@ -123,8 +123,8 @@ void handleToggle() {
 }
 
 void handleSensors() {
-  float t = temp_var;
-  float h = humi_var;
+  float t = global_temp;
+  float h = global_humi;
   String json = "{\"temp\":"+String(t)+",\"hum\":"+String(h)+"}";
   server.send(200, "application/json", json);
 }

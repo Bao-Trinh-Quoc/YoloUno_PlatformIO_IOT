@@ -33,7 +33,12 @@ Solution: Use delay(2000); at the start of setup() to force the board to wait fo
 # 23/1
 display the realtime temp and hum to the webserver v 
 
-control the LED from webserver (maybe just need to do with the onboard led)
+control the LED from webserver (maybe just need to do with the onboard led) v
 
 Make the webserver look better () (this is optional should do this when we have all the functions working)
 
+# 24/1
+
+Objective: 
+run tinyML task v
+figure out how to train AI on python for microcontroller (for researching purpose)
