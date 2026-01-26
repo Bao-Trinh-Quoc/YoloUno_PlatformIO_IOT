@@ -75,13 +75,13 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void setup_coreiot(){
 
-  //Serial.print("Connecting to WiFi...");
-  //WiFi.begin(wifi_ssid, wifi_password);
-  //while (WiFi.status() != WL_CONNECTED) {
-  while (isWifiConnected == false) {
-    delay(500);
+  // Wait for WiFi connection using semaphore
+  Serial.print("Waiting for WiFi connection...");
+  while (xSemaphoreTake(wifiConnectedSemaphore, pdMS_TO_TICKS(100)) != pdTRUE) {
     Serial.print(".");
   }
+  // Give back semaphore immediately to keep it available
+  xSemaphoreGive(wifiConnectedSemaphore);
   Serial.println(" Connected!");
 
   client.setServer(coreIOT_Server, mqttPort);
@@ -100,12 +100,19 @@ void coreiot_task(void *pvParameters){
         }
         client.loop();
 
-        // Sample payload, publish to 'v1/devices/me/telemetry'
-        String payload = "{\"temperature\":" + String(global_temp) +  ",\"humidity\":" + String(global_humi) + "}";
-        
-        client.publish("v1/devices/me/telemetry", payload.c_str());
+        // Read latest sensor data from queue (peek without removing)
+        SensorData latestData;
+        if (xQueueReceive(sensorDataQueue, &latestData, 0) == pdTRUE) {
+            // Sample payload, publish to 'v1/devices/me/telemetry'
+            String payload = "{\"temperature\":" + String(latestData.temperature) + 
+                           ",\"humidity\":" + String(latestData.humidity) + "}";
+            
+            client.publish("v1/devices/me/telemetry", payload.c_str());
+            Serial.println("Published payload: " + payload);
+        } else {
+            Serial.println("No sensor data available in queue");
+        }
 
-        Serial.println("Published payload: " + payload);
-        vTaskDelay(10000);  // Publish every 10 seconds
+        vTaskDelay(5000);  
     }
 }

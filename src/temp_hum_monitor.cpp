@@ -3,6 +3,7 @@
 
 DHT20 dht20;
 LiquidCrystal_I2C lcd(0x21, 16, 2);
+SensorData data;
 
 void temp_hum_monitor(void *pvParamaters) {
     Wire.begin(11, 12);
@@ -19,15 +20,15 @@ void temp_hum_monitor(void *pvParamaters) {
             float temp = dht20.getTemperature();
             float humi = dht20.getHumidity();
 
-            // Update global variables
-            global_temp = temp;
-            global_humi = humi;
+            data.temperature = temp;
+            data.humidity = humi;
+            data.timestamp = millis();
 
-            Serial.print("Temperature: ");
-            Serial.print(temp);
-            Serial.print(" °C, Humidity: ");
-            Serial.print(humi);
-            Serial.println(" %");
+            // Send sensor data to queue
+            if (xQueueSend(sensorDataQueue, &data, 0) != pdPASS) {
+                Serial.println("Sensor queue full, data dropped");
+            }
+            Serial.printf("Temperature: %.2f °C, Humidity: %.2f %%\n", temp, humi);
 
             lcd.setCursor(0, 0);
             lcd.print("TEMP: ");
@@ -44,6 +45,6 @@ void temp_hum_monitor(void *pvParamaters) {
             Serial.println(ret);
         }
 
-        vTaskDelay(2000);
+        vTaskDelay(5000);
     }
 }

@@ -13,8 +13,15 @@ unsigned long connect_start_ms = 0;
 bool connecting = false;
 
 String mainPage() {
-  float temperature = global_temp;
-  float humidity = global_humi;
+  SensorData latestData;
+  float temperature = 0.0;
+  float humidity = 0.0;
+  
+  if (xQueuePeek(sensorDataQueue, &latestData, 0) == pdTRUE) {
+    temperature = latestData.temperature;
+    humidity = latestData.humidity;
+  }
+  
   String led1 = led1_state ? "ON" : "OFF";
   String led2 = led2_state ? "ON" : "OFF";
 
@@ -118,8 +125,15 @@ void handleToggle() {
 }
 
 void handleSensors() {
-  float t = global_temp;
-  float h = global_humi;
+  SensorData latestData;
+  float t = 0.0;
+  float h = 0.0;
+  
+  if (xQueuePeek(sensorDataQueue, &latestData, 0) == pdTRUE) {
+    t = latestData.temperature;
+    h = latestData.humidity;
+  }
+  
   String json = "{\"temp\":"+String(t)+",\"hum\":"+String(h)+"}";
   server.send(200, "application/json", json);
 }
@@ -193,13 +207,15 @@ void main_server_task(void *pvParameters){
         Serial.println(WiFi.localIP());
         isAPMode = false;
         connecting = false;
-        isWifiConnected = true;
+        // Signal WiFi connection via semaphore
+        xSemaphoreGive(wifiConnectedSemaphore);
       } else if (millis() - connect_start_ms > 10000) { // timeout 10s
         Serial.println("WiFi connect failed! Back to AP.");
         startAP();
         setupServer();
         connecting = false;
-        isWifiConnected = false;
+        // WiFi disconnected - take semaphore if available
+        xSemaphoreTake(wifiConnectedSemaphore, 0);
       }
     }
 
