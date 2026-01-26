@@ -4,6 +4,7 @@
 #include "temp_hum_monitor.h"
 #include "mainserver.h"
 #include "tinyml.h"
+#include "core_iot.h"
 
 void setup() {
   // put your setup code here, to run once:
@@ -15,7 +16,8 @@ void setup() {
   xTaskCreate(neo_blinky, "Task Neo Blink", 2048, NULL, 2, NULL);
   xTaskCreate(temp_hum_monitor, "Task TEMP HUMI Monitor", 2048, NULL, 2, NULL);
   xTaskCreate(main_server_task, "Task Main Server", 8192, NULL, 2, NULL);
-  xTaskCreate(tiny_ml_task, "Task TinyML", 2048, NULL, 2, NULL);
+  // xTaskCreate(tiny_ml_task, "Task TinyML", 2048, NULL, 2, NULL);
+  xTaskCreate(coreiot_task, "Task CoreIOT MQTT", 4096, NULL, 2, NULL);
 }
 
 void loop() {

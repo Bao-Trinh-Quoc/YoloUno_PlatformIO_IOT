@@ -42,3 +42,19 @@ Make the webserver look better () (this is optional should do this when we have 
 Objective: 
 run tinyML task v
 figure out how to train AI on python for microcontroller (for researching purpose)
+
+ Time Series Forecasting - "The Weather Station that Predicts"
+Your current model detects errors (Anomalies). A forecasting model predicts the future.
+
+The Idea: Feed the model the last 10 minutes of temperature history. The model outputs the predicted temperature for the next minute.
+Application: Predictive AC control. If the model predicts the room is about to get too hot, turn on the specific LED (representing a fan) before it happens.
+Hardware: Uses your existing DHT20 sensor.
+Model Type: LSTM (Long Short-Term Memory) or GRU (Gated Recurrent Units), though typically simplified to Dense layers for microcontrollers.
+
+# 26/1
+
+Main task:
+try to connect to coreiot throught MQTT -- done
+but the web UI is horrible, so i need to fix it later
+
+seems like when connect to mqtt it cannot in the AP mode anymore

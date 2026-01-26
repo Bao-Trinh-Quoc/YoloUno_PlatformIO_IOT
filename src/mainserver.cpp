@@ -9,11 +9,6 @@ bool isAPMode = true;
 
 WebServer server(80);
 
-String ssid = "ESP32-AP";
-String password = "12345678";
-String wifi_ssid = "";
-String wifi_password = "";
-
 unsigned long connect_start_ms = 0;
 bool connecting = false;
 
@@ -135,6 +130,8 @@ void handleConnect() {
   wifi_ssid = server.arg("ssid");
   wifi_password = server.arg("pass");
   server.send(200, "text/plain", "Connecting....");
+  vTaskDelay(200);
+  connectToWiFi();
   isAPMode = false;
   connecting = true;
   connect_start_ms = millis();
@@ -164,6 +161,8 @@ void connectToWiFi() {
   WiFi.begin(wifi_ssid.c_str(), wifi_password.c_str());
   Serial.print("Connecting to ");
   Serial.println(wifi_ssid);
+  Serial.print(" Password: ");
+  Serial.print(wifi_password.c_str());
 }
 
 // ========== Main task ==========
@@ -194,11 +193,13 @@ void main_server_task(void *pvParameters){
         Serial.println(WiFi.localIP());
         isAPMode = false;
         connecting = false;
+        isWifiConnected = true;
       } else if (millis() - connect_start_ms > 10000) { // timeout 10s
         Serial.println("WiFi connect failed! Back to AP.");
         startAP();
         setupServer();
         connecting = false;
+        isWifiConnected = false;
       }
     }
 
