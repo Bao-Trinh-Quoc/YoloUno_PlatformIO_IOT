@@ -58,3 +58,9 @@ try to connect to coreiot throught MQTT -- done
 but the web UI is horrible, so i need to fix it later
 
 seems like when connect to mqtt it cannot in the AP mode anymore
+
+# 28/1
+
+Main ojective: run the advanced websever
+
+test OTA feature

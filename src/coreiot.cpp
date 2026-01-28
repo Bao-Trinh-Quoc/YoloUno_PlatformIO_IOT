@@ -1,8 +1,8 @@
-#include "core_iot.h"
+#include "coreiot.h"
 
 // ----------- CONFIGURE THESE! -----------
 const char* coreIOT_Server = "app.coreiot.io";  
-const char* coreIOT_Token = "149tqod7svz0sns23mhs";   // Device Access Token
+const char* coreIOT_Token = "381v0oce28z8bmu2cwtc";   // Device Access Token
 const int   mqttPort = 1883;
 // ----------------------------------------
 
@@ -15,10 +15,16 @@ void reconnect() {
   while (!client.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect (username=token, password=empty)
-    if (client.connect("IOT_DEVICE_1", coreIOT_Token, NULL)) {
-      Serial.println("connected to CoreIOT!");
+    //if (client.connect("ESP32Client", coreIOT_Token, NULL)) {
+    String clientId = "ESP32Client-";
+    clientId += String(random(0xffff), HEX);
+
+    if (client.connect(clientId.c_str(), coreIOT_Token, NULL)) {
+        
+      Serial.println("connected to CoreIOT Server!");
       client.subscribe("v1/devices/me/rpc/request/+");
       Serial.println("Subscribed to v1/devices/me/rpc/request/+");
+
     } else {
       Serial.print("failed, rc=");
       Serial.print(client.state());
@@ -75,16 +81,30 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
 void setup_coreiot(){
 
-  // Wait for WiFi connection using semaphore
-  Serial.print("Waiting for WiFi connection...");
-  while (xSemaphoreTake(wifiConnectedSemaphore, pdMS_TO_TICKS(100)) != pdTRUE) {
+  //Serial.print("Connecting to WiFi...");
+  //WiFi.begin(wifi_ssid, wifi_password);
+  //while (WiFi.status() != WL_CONNECTED) {
+  
+  // while (isWifiConnected == false) {
+  //   delay(500);
+  //   Serial.print(".");
+  // }
+
+  while(1){
+    if (xSemaphoreTake(xBinarySemaphoreInternet, portMAX_DELAY)) {
+      break;
+    }
+    delay(500);
     Serial.print(".");
   }
-  // Give back semaphore immediately to keep it available
-  xSemaphoreGive(wifiConnectedSemaphore);
-  Serial.println(" Connected!");
 
-  client.setServer(coreIOT_Server, mqttPort);
+
+  Serial.println(" Connected!");
+  Serial.print("IP Address: ");
+  Serial.println(WiFi.localIP());
+  client.setServer(CORE_IOT_SERVER.c_str(), CORE_IOT_PORT.toInt());
+  // client.setServer(coreIOT_Server, mqttPort);
+
   client.setCallback(callback);
 
 }
@@ -100,19 +120,14 @@ void coreiot_task(void *pvParameters){
         }
         client.loop();
 
-        // Read latest sensor data from queue (peek without removing)
-        SensorData latestData;
-        if (xQueueReceive(sensorDataQueue, &latestData, 0) == pdTRUE) {
-            // Sample payload, publish to 'v1/devices/me/telemetry'
-            String payload = "{\"temperature\":" + String(latestData.temperature) + 
-                           ",\"humidity\":" + String(latestData.humidity) + "}";
-            
-            client.publish("v1/devices/me/telemetry", payload.c_str());
-            Serial.println("Published payload: " + payload);
-        } else {
-            Serial.println("No sensor data available in queue");
-        }
+        // Sample payload, publish to 'v1/devices/me/telemetry'
+        String payload = "{\"temperature\":" + String(glob_temperature) +  ",\"humidity\":" + String(glob_humidity) + "}";
+        
+        client.publish("v1/devices/me/telemetry", payload.c_str());
 
-        vTaskDelay(5000);  
+
+        
+        Serial.println("Published payload: " + payload);
+        vTaskDelay(10000);  // Publish every 10 seconds
     }
 }

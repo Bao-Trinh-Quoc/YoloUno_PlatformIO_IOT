@@ -1,30 +1,20 @@
 #ifndef __GLOBAL_H__
 #define __GLOBAL_H__
+
 #include <Arduino.h>
-#include <freertos/FreeRTOS.h>
-#include <freertos/semphr.h>
-#include <freertos/queue.h>
+#include "freertos/FreeRTOS.h"
+#include "freertos/task.h"
+#include "freertos/semphr.h"
 
-extern int global_var;
-extern int led_state;
+extern float glob_temperature;
+extern float glob_humidity;
 
-// Sensor data structure for queue communication
-struct SensorData {
-  float temperature;
-  float humidity;
-  unsigned long timestamp;
-};
+extern String WIFI_SSID;
+extern String WIFI_PASS;
+extern String CORE_IOT_TOKEN;
+extern String CORE_IOT_SERVER;
+extern String CORE_IOT_PORT;
 
-// RTOS Primitives
-extern QueueHandle_t sensorDataQueue;           
-extern SemaphoreHandle_t wifiConnectedSemaphore; 
-// WiFi credentials
-extern String ssid;
-extern String password;
-extern String wifi_ssid;
-extern String wifi_password;
-
-#define SENSOR_QUEUE_LENGTH 10
-#define SENSOR_QUEUE_ITEM_SIZE sizeof(SensorData)
-
+extern boolean isWifiConnected;
+extern SemaphoreHandle_t xBinarySemaphoreInternet;
 #endif
