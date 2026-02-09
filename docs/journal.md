@@ -61,6 +61,20 @@ seems like when connect to mqtt it cannot in the AP mode anymore
 
 # 28/1
 
-Main ojective: run the advanced websever
+Main ojective: run the advanced websever done
+
+but a lototototo of work need to be done, the code is messy af
+holy shit, and i have not test the TOA too.
 
 test OTA feature
+
+# 9/2
+
+OTA feature is so funny holy shit, you just need to build elf 
+after this, go to this:
+http://192.168.2.4/update
+
+then just upload :), all the hardwork has already implemented for you ...
+well, i guess, 
+
+Next step? try to create local MQTT broker and do the last videos before we did the assignment.

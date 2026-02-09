@@ -10,7 +10,7 @@ void neo_blinky(void *pvParameters){
     strip.show();
 
     while(1) {                          
-        strip.setPixelColor(0, strip.Color(255, 0, 0)); // Set pixel 0 to red
+        strip.setPixelColor(0, strip.Color(0, 255, 0));
         strip.show(); // Update the strip
 
         // Wait for 500 milliseconds
