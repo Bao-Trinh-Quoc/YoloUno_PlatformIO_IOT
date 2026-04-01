@@ -4,6 +4,8 @@
 const char* coreIOT_Server = "app.coreiot.io";  
 const char* coreIOT_Token = "381v0oce28z8bmu2cwtc";   // Device Access Token
 const int   mqttPort = 1883;
+
+const char* mqttBroker = "192.168.2.17";
 // ----------------------------------------
 
 WiFiClient espClient;
@@ -16,14 +18,25 @@ void reconnect() {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect (username=token, password=empty)
     //if (client.connect("ESP32Client", coreIOT_Token, NULL)) {
-    String clientId = "ESP32Client-";
+    String clientId = "ESP32Client";
     clientId += String(random(0xffff), HEX);
 
-    if (client.connect(clientId.c_str(), coreIOT_Token, NULL)) {
+    // if (client.connect(clientId.c_str(), coreIOT_Token, NULL)) {
         
-      Serial.println("connected to CoreIOT Server!");
-      client.subscribe("v1/devices/me/rpc/request/+");
-      Serial.println("Subscribed to v1/devices/me/rpc/request/+");
+    //   Serial.println("connected to CoreIOT Server!");
+    //   client.subscribe("v1/devices/me/rpc/request/+");
+    //   Serial.println("Subscribed to v1/devices/me/rpc/request/+");
+
+    // } else {
+    //   Serial.print("failed, rc=");
+    //   Serial.print(client.state());
+    //   Serial.println(" try again in 5 seconds");
+    //   delay(5000);
+    // }
+    if (client.connect(clientId.c_str())) {
+      Serial.println("connected to Local Broker!");
+      client.subscribe("test/topic");
+      Serial.println("Subscribed to test/topic");
 
     } else {
       Serial.print("failed, rc=");
@@ -65,11 +78,11 @@ void callback(char* topic, byte* payload, unsigned int length) {
 
     if (strcmp(params, "ON") == 0) {
       Serial.println("Device turned ON.");
-      //TODO
+      // TODO
 
     } else {   
       Serial.println("Device turned OFF.");
-      //TODO
+      // TODO
 
     }
   } else {
@@ -102,7 +115,8 @@ void setup_coreiot(){
   Serial.println(" Connected!");
   Serial.print("IP Address: ");
   Serial.println(WiFi.localIP());
-  client.setServer(CORE_IOT_SERVER.c_str(), CORE_IOT_PORT.toInt());
+  // client.setServer(CORE_IOT_SERVER.c_str(), CORE_IOT_PORT.toInt());
+  client.setServer(mqttBroker, mqttPort);
   // client.setServer(coreIOT_Server, mqttPort);
 
   client.setCallback(callback);
@@ -123,7 +137,8 @@ void coreiot_task(void *pvParameters){
         // Sample payload, publish to 'v1/devices/me/telemetry'
         String payload = "{\"temperature\":" + String(glob_temperature) +  ",\"humidity\":" + String(glob_humidity) + "}";
         
-        client.publish("v1/devices/me/telemetry", payload.c_str());
+        // client.publish("v1/devices/me/telemetry", payload.c_str());
+        client.publish("test/topic", payload.c_str());
 
 
         

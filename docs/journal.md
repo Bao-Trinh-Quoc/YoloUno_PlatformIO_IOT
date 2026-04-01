@@ -78,3 +78,7 @@ then just upload :), all the hardwork has already implemented for you ...
 well, i guess, 
 
 Next step? try to create local MQTT broker and do the last videos before we did the assignment.
+
+
+# done, now just need to create the repo for this
+
